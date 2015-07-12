@@ -1,0 +1,1 @@
+perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:lib -e 'make_schema_at("PieDB::Schema", { debug => 1, components => [qw/ InflateColumn::DateTime /]}, [ "dbi:Pg:dbname=pieng;host=localhost","tim", "viac3" ])'
