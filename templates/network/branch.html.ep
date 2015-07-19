@@ -62,10 +62,10 @@
 %     else {
     <li><div class="freespace">free space - insert network
 %       foreach my $mask (@{$child->possible_masks}) {
-    <a href="<%= $c->url_for( 'networkaddid', 'id' => $child->pieng_network_id,
-                       ( 'fsfirst' => $child->first_ip_compact,
+    <a href="<%= $c->url_for( 'networkaddid', 'id' => $child->pieng_network_id)->query(
+                        { 'fsfirst' => $child->first_ip_compact,
                          'fslast' => $child->last_ip_compact,
-                         'rmask' => $mask ) ) %>">/<%= $mask %></a>
+                         'rmask' => $mask } ) %>">/<%= $mask %></a>
 %       }
     <br><%= $child->first_ip_compact %> to <%= $child->last_ip_compact %></div></li>
 %     }
@@ -77,3 +77,4 @@
 % end
 
 <%= $branchblock->($branchblock, $branch) %>
+
