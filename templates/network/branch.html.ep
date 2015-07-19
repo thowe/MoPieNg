@@ -1,0 +1,79 @@
+% layout 'branch_wrapper';
+<!-- hidden templates -->
+<div class="templates">
+  <!-- This is generated here for use by the jQ get_hosts function. -->
+  <a id="ahostlisttable" href="<%= $c->url_for('hostlisttable') %>">listtable</a>
+  <div class="template hosts">
+  <div class="hosts"><p>No host details specified.</p></div>
+  </div>
+  <div class="template add_host">
+  <form action="<%= $c->url_for('hostedit') %>" method="post" class="add_host">
+    <table class="add_host">
+      <tr>
+        <th>Host Address</th><th>Description</th><th>Add or Edit</th>
+      </tr>
+      <tr>
+        <td><input type="text" name="hostaddress"></td>
+        <td><input type="text" name="hostdescription"></td>
+        <td><input type="submit" name="hostaddbutton" value="Add/Change"></td>
+      </tr>
+    </table>
+  </form>
+  </div>
+</div>
+<h1 id="branch_heading">Branch of <%= $network->address_range %></h1>
+<a href="javascript:;" name="hide-assigns">Hide Assignments</a> |
+ <a href="javascript:;" name="show-assigns">Show Assignments</a>
+<p><%= $network->description %>
+% if( defined $network->account ) {
+| account: <%= $network->account %>
+% }
+% if( defined $network->service ) {
+| service: <%= $network->service %>
+% }
+<br>
+% if( defined $network->parent ) {
+<a href="<%= $c->url_for('networkbranchid', id => $network->parent->id ) %>">zoom out</a>
+% }
+</p>
+
+% my $branchblock = begin
+%   my ($branchblock, $children) = @_;
+  <ul>
+%   foreach my $child (@{$children}) {
+%     if( defined $child->{'address_range'} ) {
+    <li><div class="address_range <% if( $child->{'subdivide'} ) { %>subdivide<% } else { %>nosubdivide<% } %>"
+           data-networkid="<%= $child->{'id'} %>">
+    <div class="expander">[+]</div>
+    <div class="summary"><h3 class="cidr"><%= $child->{'address_range'} %></h3>
+    <p class="range_description"
+     ><span class="network_info owner"
+        ><% if( $child->{'owner'} ) { %><%= $child->{'owner'} %><% } else { %>no owner entered<% } %></span
+     ><span class="network_info description"><% if( $child->{'description'} ) { =%><%= $child->{'description'} %><% } %></span
+     ><span class="network_info account"><% if( $child->{'account'} ) { %>account: <%= $child->{'account'} %><% } %></span
+     ><span class="network_info service"><% if( $child->{'service'} ) { %>service: <%= $child->{'service'} %><% } %></span></p>
+    </div>
+    <div class="details collapsed"><a href="<%= $c->url_for( 'networkbranchid', 'id' => $child->{'id'} ) %>">zoom in</a> |
+        <a href="<%= $c->url_for('networkeditid', 'id' => $child->{'id'} ) %>">edit</a> |
+        <a href="<%= $c->url_for('networkdeleteid', 'id' => $child->{'id'} ) %>"
+           class="deletenetwork">delete</a></div>
+    </div></li>
+%     }
+%     else {
+    <li><div class="freespace">free space - insert network
+%       foreach my $mask (@{$child->possible_masks}) {
+    <a href="<%= $c->url_for( 'networkaddid', 'id' => $child->pieng_network_id,
+                       ( 'fsfirst' => $child->first_ip_compact,
+                         'fslast' => $child->last_ip_compact,
+                         'rmask' => $mask ) ) %>">/<%= $mask %></a>
+%       }
+    <br><%= $child->first_ip_compact %> to <%= $child->last_ip_compact %></div></li>
+%     }
+%     if( defined $child->{'children'} ) {
+      <%= $branchblock->($branchblock, $child->{'children'}) %>
+%     }
+%   }
+  </ul>
+% end
+
+<%= $branchblock->($branchblock, $branch) %>

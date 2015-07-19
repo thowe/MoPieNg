@@ -1,0 +1,192 @@
+body {
+ color: #000;
+ background-color: #eee;
+ margin: 0;
+}
+
+div#header {
+ color: #FFF;
+ background-color: #159;
+ text-align: center;
+}
+
+div#header h1 {
+ margin-top: 0;
+}
+
+h1#branch_heading {
+margin-bottom: 0.2em;
+}
+
+div#navigation {
+ text-align: left;
+}
+
+div#navigation div.menu {
+ vertical-align: top;
+ display: inline-block;
+}
+
+div.message {
+ text-align: center;
+ background-color: #eee;
+ border: 2px solid #159;
+ padding-top: 2px;
+ padding-bottom: 2px;
+}
+
+div.templates {
+ display: none;
+}
+
+div#content {
+ max-width: 86%;
+ min-width: 50%;
+ margin-left: auto;
+ margin-right: auto;
+ margin-top: 10px;
+ margin-bottom: 10px;
+ text-align: left;
+ background-color: #ddd;
+ border: 1px solid #aaa;
+ padding: 8px;
+}
+
+div#content-wide {
+ width: 98%;
+ margin-left: auto;
+ margin-right: auto;
+ margin-top: 10px;
+ margin-bottom: 10px;
+ text-align: left;
+ background-color: #fff;
+ border: 1px solid #aaa;
+ padding: 8px;
+}
+
+table.user td.buttons {
+ text-align: right;
+}
+
+table.user tr.offcolor {
+ background-color: #cde;
+}
+
+table.changelog td div{
+ max-width: 80%;
+}
+
+table.changelog tr.lite {
+ background-color: white;
+}
+
+table.userlist, table.user {
+ margin-left: auto;
+ margin-right: auto;
+}
+
+table.userlist th {
+ padding: 4px;
+}
+
+table.userlist td {
+ padding: 4px;
+}
+
+table.add_host th {
+ font-size: 75%;
+ font-weight: normal;
+}
+
+table.hostlist {
+ margin-top: 4px;
+ margin-left: 2px;
+ margin-right: 2px;
+}
+
+table.hostlist tr:nth-child(even) {
+ background: #eee;
+}
+
+table.hostlist, table.hostlist td, table.hostlist th {
+ border-style: solid;
+ border-collapse: collapse;
+ border-width: 1px;
+}
+
+table.hostlist td,table.hostlist th  {
+ font-size: smaller;
+}
+
+div.address_range {
+ border: 1px solid black;
+ display: inline-block;
+ min-width: 300px;
+ padding: 0px;
+ margin-bottom: 2px;
+ margin-right: auto;
+ vertical-align: top;
+}
+
+div.address_range div.summary {
+ display: inline-block;
+ vertical-align: top;
+}
+
+div.address_range div.details {
+ background-color: #fff;
+ margin: 4px;
+ border: 1px solid #aaa;
+}
+
+div.freespace {
+ color: #777;
+}
+
+li.child-list {
+ list-style: none;
+}
+
+div.expander {
+ display: inline-block;
+ vertical-align: top;
+}
+
+div.expander:hover {
+ cursor: pointer;
+}
+
+.collapsed {
+ display: none;
+}
+
+h3.cidr {
+ color: #676;
+}
+
+h3.cidr:hover {
+}
+
+div.subdivide {
+ background-color: #eceac6;
+}
+
+div.nosubdivide {
+ background-color: #dcdcf6;
+}
+
+div.address_range h3, p {
+ margin: 1px;
+}
+
+span.network_info {
+ margin-right: 8px;
+}
+
+span.owner {
+ font-weight: bold;
+}
+
+span.description {
+ text-decoration: underline;
+}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PieNg</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="<%= $c->url_for('/css/style.css') %>" type="text/css" media="screen">
+<script type="text/javascript" src="<%= $c->url_for('/jq/jquery-1.9.1.min.js') %>"></script>
+<script type="text/javascript" src="<%= $c->url_for('/scripts/pieng_behavior.js') %>"></script>
+</head>
+<body>
+<div id="header">
+<h1>PieNg</h1>
+Utilitarian IP address organizer.
+</div>

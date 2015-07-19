@@ -1,0 +1,22 @@
+% layout 'default';
+<h3>Network Roots</h3>
+<table class="userlist">
+<tr><th>Network</th><th>Comment</th><th></th><th></th><th></th></tr>
+% if( $roots->count ) {
+%   while( my $root = $roots->next ) {
+<tr>
+<td><%= $root->address_range %></td>
+<td><%= $root->description %></td>
+<td><a href="<%= url_for( 'networkbranchid', id => $root->id ) %>">branch</a></td>
+<td><a href="<%= url_for( 'networkeditid', id => $root->id ) %>">edit</a></td>
+<td><a href="<%= url_for( 'networkdeleteid', id => $root->id ) %>"
+       class="deletenetwork">delete</a></td>
+</tr>
+%   }
+% }
+% else {
+<tr>
+<td colspan="3">There aren't any networks!</td>
+</tr>
+%}
+</table>

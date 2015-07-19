@@ -1,6 +1,6 @@
 %= include 'default_top'
 %= include 'default_navigation'
-<div id="content">
+<div id="content-wide">
 % if( defined stash('message') ) {
 <div class="message"><%= stash('message') %></div>
 % }

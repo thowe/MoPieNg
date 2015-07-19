@@ -1,0 +1,22 @@
+% layout 'simple';
+% if( not defined $c->session->{'user'} ) {
+<form action="<%= $c->url_for('login') %>"
+  method="post" accept-charset="utf-8">
+  <p>
+  <label for="username">Username</label>
+  <input type="text" name="username" value="" id="username">
+  <br><br>
+  <label for="password">Password</label>
+  <input type="password" name="password" value="" id="password">
+  </p>
+  <p>
+<% if( defined stash('requested') ) { =%>
+  <input type="hidden" name="requested" value="<%= stash('requested') %>">
+<% } =%>
+  <input type="submit" value="Login &rarr;">
+  </p>
+</form>
+% }
+% else {
+<p>You are already logged in.</p>
+% }

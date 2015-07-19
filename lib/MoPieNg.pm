@@ -1,6 +1,8 @@
 package MoPieNg;
 use Mojo::Base 'Mojolicious';
 
+use PieDB::Schema;
+
 # This method will run once at server start
 sub startup {
   my $self = shift;
@@ -37,7 +39,13 @@ sub startup {
   my $root = $r->under('/')->to('user#verify_authenticated');
 
   # Normal route to controller
-  $root->get('/')->to('example#welcome');
+  $root->get('/')->to('network#roots');
+
+  $root->get('/network/roots')->to('network#roots');
+  $root->get('/network/branch/:id')->to('network#branch');
+
+  $root->any([qw (GET POST)] => '/network/add/:id')->to('network#add');
 }
 
 1;
+
