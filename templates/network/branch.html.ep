@@ -36,7 +36,6 @@
 <a href="<%= $c->url_for('networkbranchid', id => $network->parent->id ) %>">zoom out</a>
 % }
 </p>
-
 % my $branchblock = begin
 %   my ($branchblock, $children) = @_;
   <ul>

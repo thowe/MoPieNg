@@ -43,8 +43,11 @@ sub startup {
 
   $root->get('/network/roots')->to('network#roots');
   $root->get('/network/branch/:id')->to('network#branch');
-
   $root->any([qw (GET POST)] => '/network/add/:id')->to('network#add');
+  
+
+  $root->get('/user/list')->to('user#list');
+  $root->get('/user/edit/:id')->to('user#edit');
 }
 
 1;
