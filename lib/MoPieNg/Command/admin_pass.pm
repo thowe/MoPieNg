@@ -25,8 +25,8 @@ sub run {
   }
   else {
     $admin = $schema->resultset('User')->create({
-                username => $admin_user,
-                password => $admin_pass });
+                username => $admin_user });
+    $admin->set_encrypted_password($admin_pass);
     my $role = $schema->resultset('Role')->find(
                    { name => 'administrator' });
     $admin->user_roles->create({ role => $role->id });
