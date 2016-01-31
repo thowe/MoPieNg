@@ -168,6 +168,22 @@ sub has_role {
     return $roles; # should be undef if nothing found
 }
 
+=head2 has_role_any
+
+Given a list of role names, return 0 if the user doesn't have any of those
+roles, or return a positive integer if it does.
+
+=cut
+
+sub has_role_any {
+    my ($self, @rolenames) = @_;
+
+    my @roles = $self->roles->search(
+                    { 'name' => \@rolenames },{})->all;
+
+    return scalar @roles;
+}
+
 =head2 has_role_name
 
 =cut
