@@ -114,7 +114,12 @@ sub login {
     else {
         my $user = $self->param('username');
         my $pass = $self->param('password');
-        my $requested = $self->param('requested');
+
+        # Default to root so we don't end up at the login page again.
+        my $requested = '/';
+        if( defined $self->param('requested') ) {
+          $requested = $self->param('requested')
+        }
 
         my $dbuser = $self->piedb->resultset('User')->find(
                          { 'username' => $user } );

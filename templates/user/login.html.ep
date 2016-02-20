@@ -18,5 +18,6 @@
 </form>
 % }
 % else {
-<p>You are already logged in.</p>
+<p>You are already logged in.
+  <a href="<%= $c->url_for('/') %>">Go Home.</a></p>
 % }
