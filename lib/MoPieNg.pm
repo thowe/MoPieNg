@@ -27,6 +27,9 @@ sub startup {
                        }
                );
 
+  # Changelog helper
+  $self->helper('netlog' => \&netlog);
+
   # Router
   my $r = $self->routes;
 
@@ -48,6 +51,24 @@ sub startup {
 
   $root->get('/user/list')->to('user#list');
   $root->get('/user/edit/:id')->to('user#edit');
+}
+
+=head2 netlog
+netlog is called when a change to a record is successful.
+It logs the change with the changed columns in a JSON structure
+=cut
+
+sub netlog {
+  use Mojo::JSON qw( encode_json );
+  my ($c, $prefix, $log_type, $cols) = @_;
+
+  my $user_id = $c->session('user');
+
+  my $new_changelog = $c->helpers->piedb->resultset('Changelog')->new({
+                            'user'   => $user_id,
+                            'prefix' => $prefix,
+                            'change' => encode_json({ $log_type => $cols }) });
+  $new_changelog->insert;
 }
 
 1;
