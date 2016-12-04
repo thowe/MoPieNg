@@ -218,4 +218,15 @@ sub roots {
   $self->stash( 'message' => $self->flash('message') );
 }
 
+=head2 search
+
+Search through the networks for a particular string, which may be                
+an IP address, a network, or any other part of a record.
+
+=cut
+
+sub search {
+  my $self = shift;
+}
+
 1;
