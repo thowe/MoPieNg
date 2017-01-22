@@ -28,7 +28,7 @@ sub add {
 
   # If not authorised, drop back to the referring page.
   if( not $user->has_role_any( qw/ administrator creator / ) ) {
-    $self->flash('message' => "You are not authorized to create contracts.");
+    $self->flash('message' => "You are not authorized to create networks.");
     $self->redirect_to($referrer);
     return;
   }
@@ -128,7 +128,7 @@ sub add {
     if( $id ne 'root' ) {
       # Can the parent be subdivided?
       if( not $parent->subdivide ) {
-        $self->stash('message' => $self->params('address_range') .
+        $self->stash('message' => $self->param('address_range') .
             " can't be added while the parent can't be subdivided.");
         return;
       }
@@ -155,12 +155,7 @@ sub add {
     # Stick it in the database.
     $new_network->insert;
 
-    ## Add our creation to the changelog.
-    #$c->stash->{'prefix'} = $new_network->cidr_compact;
-    #$c->stash->{'changed_cols'} = { $new_network->get_columns };
-    #$c->stash->{'log_type'} = 'created';
-    #$c->forward('/logs/netlog');
-
+    # Add our creation to the changelog.
     $self->helpers->netlog(
         $new_network->cidr_compact,
         'created',
@@ -202,6 +197,36 @@ sub branch {
   }
 }
 
+=head2 edit
+
+
+
+=cut
+
+sub edit {
+  my $self = shift;
+  my $user = $self->piedb->resultset('User')->find(
+                         { 'id' => $self->session('user') } );
+  my $path = $self->req->url->path;
+
+  # we don't want to get redirected back to ourself
+  my $referrer = $self->param('referrer');
+  $referrer ||= Mojo::URL->new($self->req->headers->referrer)->path;
+  $referrer = $self->url_for('networkroots') if $referrer =~ /$path/;
+
+  $self->stash('referrer' => $referrer);
+
+  # If not authorised, drop back to the referring page.
+  if( not $user->has_role_any( qw/ administrator creator editor / ) ) {
+    $self->flash('message' => "You are not authorized to edit networks.");
+    $self->redirect_to($referrer);
+    return;
+  }
+
+  
+}
+
+
 =head2 roots
 
 Display a list of the base networks.
@@ -227,6 +252,77 @@ an IP address, a network, or any other part of a record.
 
 sub search {
   my $self = shift;
+
+  return if( uc $self->req->method ne 'POST' );
+
+
+  my $term = $self->param('term');
+  $self->stash('searched_term' => $term);
+
+  my $search_rs;
+
+  # If we are just searching for an integer, let's assume it's a service id
+  # before searching for it elsewhere.  Since a plain integer will look like
+  # a valid address, we need to do this first.  It could also be part of a
+  # owner name or description.  Plain integers will almost certainly not
+  # be searched for as an IP address.
+  if( $term =~ /\A\d+\z/ and
+      ($search_rs = $self->piedb->resultset('Network')->search(
+         [{ 'service' => $term},
+          { 'owner' => { '-like' => ['%' . $term . '%'] }},
+          { 'description' => { '-like' => ['%' . $term . '%'] }},
+          { 'account' => $term } ],
+          {} ))->count > 0 ) {
+    $self->stash('networks' => [$search_rs->all]);
+    return;
+  }
+
+  # Next we'll search for the account.  Since I am not sure what folks
+  # may use for account numbers/IDs, we'll also get it out of the way before
+  # searching networks since they could very well appear to be valid
+  # addresses to NetAddr::IP::Lite.
+  if(($search_rs = $self->piedb->resultset('Network')->search(
+          { 'account' => $term}, {} ))->count > 0 ) {
+    $self->stash('networks' => [$search_rs->all]);
+    return;
+  }
+
+  # Is the search term a valid network? (meaning Net::Addr::IP thinks so)
+  # If so, we will search the db for a network containing the term.
+  # If not, we will search the other network attributes.
+  my $netaddrip;
+  $netaddrip = NetAddr::IP::Lite->new($term);
+  if( defined $netaddrip ) {
+
+    # NetAddr::IP will accept more variations of input than will PostgreSQL.
+    # We will need to sanitize it a bit to make sure it is really valid
+    # for Pg.  We do this with the same logic as in our Network class.
+    # I should probably derive a new object from NetAddr::IP::Lite and define
+    # a method to do this.
+    my $compact_cidr;
+    if( $netaddrip->version == 4) {
+      $compact_cidr = $netaddrip->cidr;
+    }
+    else {
+      $compact_cidr =  $netaddrip->short . '/' . $netaddrip->masklen;
+    }
+
+    $search_rs = $self->piedb->resultset('Network')->search(
+        { 'address_range' => { '>>=',  $compact_cidr},
+          'subdivide' => 'f' }, {} );
+
+    $self->stash('networks' => [$search_rs->all]);
+    return;
+  }
+
+  if( ($search_rs = $self->piedb->resultset('Network')->search(
+         [{ 'owner' => { '-ilike' => ['%' . $term . '%'] }},
+          { 'description' => { '-ilike' => ['%' . $term . '%'] }}, ],
+          {} ))->count > 0 ) {
+    $self->stash('networks' => [$search_rs->all]);
+    return;
+  }
+
 }
 
 1;
