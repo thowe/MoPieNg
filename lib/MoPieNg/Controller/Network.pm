@@ -205,6 +205,7 @@ sub branch {
 
 sub edit {
   my $self = shift;
+  my $id = $self->param('id');
   my $user = $self->piedb->resultset('User')->find(
                          { 'id' => $self->session('user') } );
   my $path = $self->req->url->path;
@@ -223,7 +224,28 @@ sub edit {
     return;
   }
 
-  
+  # Find the network or go back to roots.
+  my $network = $self->piedb->resultset('Network')->find({ 'id' => $id });
+  if( not defined $network ) {
+      $self->flash( 'message' => "No network with that id." );
+      $self->redirect_to('networkroots');
+  }
+  $self->stash( 'network' => $network );
+
+  # Save old masks, since DBIC apparently can't tell if an array
+  # field is dirty.
+  my $oldmasks = $network->valid_masks;
+
+  # When/if the form is submitted.
+  if( $self->req->method eq 'POST' ) {
+    my @masks;
+    if( $self->param('valid_masks') ) {
+      @masks = $self->param('valid_masks') =~ /(\d+)/g;
+      @masks = sort {$a <=> $b} @masks;
+    }
+
+
+  }
 }
 
 
@@ -245,7 +267,7 @@ sub roots {
 
 =head2 search
 
-Search through the networks for a particular string, which may be                
+Search through the networks for a particular string, which may be
 an IP address, a network, or any other part of a record.
 
 =cut

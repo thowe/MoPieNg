@@ -19,23 +19,36 @@ sub verify_authenticated {
 =cut
 
 sub edit {
-    my $self = shift;
+  my $self = shift;
+  my $path = $self->req->url->path;
+  my $user = $self->piedb->resultset('User')->find(
+                         { 'id' => $self->session('user') } );
 
-    # Use the argument passed in (which should be the
-    # id of a user record).  The argument could also be
-    # supplied by $c->req->args->[0] .
-#    my $edituser = $c->model('PieDB::User')->find(
-#                                     { id => $id } );
-#    if(!defined $edituser) {
-#        $c->stash->{'message'} = "No such user id.";
-#        return;
-#    }
+  # we don't want to get redirected back to ourself
+  my $referrer = $self->param('referrer');
+  $referrer ||= Mojo::URL->new($self->req->headers->referrer)->path;
+  $referrer = $self->url_for('userlist') if $referrer =~ /$path/;
+
+  $self->stash('referrer' => $referrer);
+  my $edituser = $self->piedb->resultset('User')->find(
+                          { id => $self->param('id') } );
+
+  if( not defined $edituser ) {
+    $self->flash('message' => "No such user id.");
+    $self->redirect_to($referrer);
+    return;
+  }
+  $self->stash('edituser' => $edituser);
+
+  # If not authorised, drop back to the referring page.
+  if( not $user->has_role_any( qw/ administrator / ) ) {
+    $self->flash('message' => "You are not authorized to edit users.");
+    $self->redirect_to($referrer);
+    return;
+  }
 
     # If the edit form has actually been submitted...
-#    if(lc $c->req->method eq 'post') {
-#        # if we are doing so as an administrator
-#        if($c->check_user_roles( qw/ administrator / )) {
-#            my $params = $c->req->params;
+    if(lc $self->req->method eq 'post') {
 #
 #            if(!Email::Valid->address($params->{email})) {
 #                $c->stash->{'message'} = $params->{email} . " is not a valid email address.";
@@ -77,7 +90,7 @@ sub edit {
 #        # If we are just going to display the user edit form, we
 #        # will give it the user to edit.
 #        $c->stash->{'edituser'} = $edituser;
-#    }
+    }
 }
 
 =head2 list

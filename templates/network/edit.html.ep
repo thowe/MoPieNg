@@ -1,0 +1,57 @@
+% layout 'default';
+% use feature 'postderef';
+% no warnings 'experimental::postderef';
+<h3>Editing <%= $network->address_range %></h3>
+<form action="<%= $c->url_for('networkedit', $id)%>" method="POST">
+<div class="form_table">
+% if( $c->stash('referrer') ) {
+  <input type="hidden" name="referrer" value="<%= $c->stash('referrer') %>">
+% }
+<table class="user">
+<tr><td colspan="2">
+</td></tr>
+<tr>
+<td><label for="description">Description:</label></td>
+<td><input type="text" id="description" name="description"
+     value="<%= $network->description %>"></td>
+</tr>
+<tr>
+<td><label for="owner">Owner:</label></td>
+<td><input type="text" id="owner" name="owner" maxlength="255"
+     value="<%= $network->owner %>"></td>
+</tr>
+<tr>
+<td><label for="account">Account:</label></td>
+<td><input type="text" id="account" name="account" maxlength="32"
+     value="<%= $network->account %>"></td>
+</tr>
+<tr>
+<td><label for="service">Service ID:</label></td>
+<td><input type="text" id="service" name="service"
+     value="<%= $network->service %>"></td>
+</tr>
+<tr>
+<td>Will this range be subdivided?</td>
+<td><label for="subdivide_t">yes
+</label><input type="radio" name="subdivide" id="subdivide_t" value="1"
+         <%= 'checked' if( $network->subdivide ) %> >
+<label for="subdivide_f">no
+</label><input type="radio" name="subdivide"
+               id="subdivide_f" value="0"
+               <%= 'checked' if( not $network->subdivide ) %> ></td>
+</tr>
+<tr>
+<td><label for="valid_masks">Valid Subnet Masks:</label></td>
+<td><input type="text" id="valid_masks" name="valid_masks"
+     value="<%= join(' ', @{$network->valid_masks}) if($network->valid_masks); %>"
+     <%= 'disabled' if( not  @{$network->valid_masks} ); %> >
+</td>
+</tr>
+<tr>
+<td colspan="2" class="buttons">
+<input type="submit" id="editbutton" name="editbutton" value="Edit">
+</td>
+</tr>
+</table>
+</div>
+</form>
