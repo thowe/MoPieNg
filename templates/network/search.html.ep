@@ -2,17 +2,17 @@
 % use feature 'postderef';
 % no warnings 'experimental::postderef';
 
-<form action="<%= $c->url_for('networksearch') %>" method="post"> 
+<form action="<%= $c->url_for('networksearch') %>" method="post">
 <div class="form_table">
 <table class="user">
 <tr>
 <td><label for="term">Search Term:</label></td>
-<td><input type="text" id="term" name="term" maxlength="80" size="38"></td> 
+<td><input type="text" id="term" name="term" maxlength="80" size="38"></td>
 </tr>
 <!--tr>
 <td>Search Hosts?</td>
 <td><label for="searchhosts_t">yes
-</label><input type="radio" name="searchhosts" id="subdivide_t" value="true"> 
+</label><input type="radio" name="searchhosts" id="subdivide_t" value="true">
 <label for="searchhosts_f">no
 </label><input type="radio" name="searchhosts" id="subdivide_f" value="false" checked></td>
 </tr -->
@@ -36,7 +36,7 @@
 <td><%= $network->address_range %></td><td><%= $network->owner %></td>
 <td><%= $network->description %></td><td><%= $network->account %></td>
 <td><%= $network->service %></td>
-<td><a href="<%= $c->url_for('networkbranchid', $network->id) %>">branch</a></td>
+<td><a href="<%= url_for('networkbranchid', id => $network->id) %>">branch</a></td>
 </tr>
 %   }
 % }
