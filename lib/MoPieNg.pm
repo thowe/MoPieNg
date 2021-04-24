@@ -46,10 +46,11 @@ sub startup {
 
   $root->get('/network/roots')->to('network#roots');
   $root->get('/network/branch/:id')->to('network#branch');
-  $root->get('/network/edit/:id')->to('network#edit');
+  $root->any([qw (GET POST)] => '/network/edit/:id')->to('network#edit');
   $root->any([qw (GET POST)] => '/network/search')->to('network#search');
   $root->any([qw (GET POST)] => '/network/add/:id')->to('network#add');
 
+  $root->get('/log')->to('log#index');
 
   $root->get('/user/list')->to('user#list');
   $root->get('/user/edit/:id')->to('user#edit');

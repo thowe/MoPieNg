@@ -232,10 +232,6 @@ sub edit {
   }
   $self->stash( 'network' => $network );
 
-  # Save old masks, since DBIC apparently can't tell if an array
-  # field is dirty.
-  my $oldmasks = $network->valid_masks;
-
   # When/if the form is submitted.
   if( $self->req->method eq 'POST' ) {
     my @masks;
@@ -244,7 +240,64 @@ sub edit {
       @masks = sort {$a <=> $b} @masks;
     }
 
+    if( $self->param('service') and $self->param('service') ne '' and
+        $self->param('service') =~ m/[^0-9.]/ ) {
 
+      $self->flash( 'message' => "Service ID should be an integer." );
+      $self->redirect_to($referrer);
+      return;
+    }
+
+    $network->set_columns({
+                description => $self->param('description'),
+                subdivide   => $self->param('subdivide'),
+                valid_masks => \@masks,
+                owner       => $self->param('owner'),
+                account     => $self->param('account'),
+                service     => $self->param('service') eq '' ?
+                                   undef : $self->param('service') });
+
+    my %changed_cols = $network->get_dirty_columns;
+
+    # We don't want to exclude existing children when changing valid_masks.
+    if( defined $changed_cols{'valid_masks'} and $network->subdivide and
+        $network->has_children ) {
+      my @net_children = $network->networks;
+      foreach my $child (@net_children) {
+        if( ! grep {$_ eq $child->net_addr_ip->masklen} @{$network->valid_masks} ) {
+          $self->stash( 'message' =>
+            "You can't change your masks to exclude an existing child.");
+            return;
+        }
+      }
+    }
+
+    # Do we have logical masks? (always true if we aren't subdividing)
+    if( ! $network->masks_are_logical ) {
+      $self->stash('message' => $self->param('valid_masks') .
+                                " aren't logical netmasks here.");
+      return;
+    }
+
+    $network->update;
+
+    # Add our updates to the changelog, but only if there are any.
+    if( keys(%changed_cols) ) {
+      $self->flash('prefix' => $network->cidr_compact);
+      $self->flash('changed_cols' => \%changed_cols);
+      $self->flash('log_type' => 'updated');
+
+      # Add our edits to the changelog.
+      $self->helpers->netlog(
+        $network->cidr_compact,
+        'edited',
+        { $network->get_columns }
+      );
+
+      $self->flash('message' => $network->address_range . ' edited');
+    }
+
+    $self->redirect_to($referrer);
   }
 }
 
