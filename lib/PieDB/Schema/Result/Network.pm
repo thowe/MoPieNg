@@ -281,7 +281,7 @@ sub branch_with_space {
                 subnet => $self->net_addr_ip,
                 pieng_network_id => $self->id,
                 valid_masks => $self->valid_masks );
-                                          
+
         }
 
         push @branch, ({ id            => $child->id,
@@ -348,7 +348,7 @@ sub following_addr {
         eq $self->net_addr_ip->broadcast->addr or
         ! $self->parent->net_addr_ip->contains($self->net_addr_ip) ) {
 
-        return undef; 
+        return undef;
     }
 
     return NetAddr::IP::Lite->new(
@@ -467,7 +467,7 @@ sub preceding_addr {
         $self->parent->net_addr_ip->addr eq $self->net_addr_ip->addr or
         ! $self->parent->net_addr_ip->contains($self->net_addr_ip) ) {
 
-        return undef; 
+        return undef;
     }
 
     return NetAddr::IP::Lite->new(
@@ -498,6 +498,16 @@ sub smallest_container {
                     } )->first;
 
     return $container;
+}
+
+# Suggested by mst to check if array columns are dirty.
+sub _eq_column_values {
+  my ($self, $col, $old, $new) = @_;
+  if( ref($old) eq 'ARRAY' and ref($new) eq 'ARRAY' ){
+    return 1 if( join('-', @$old) eq join('-', @$new) );
+    return 0;
+  }
+  return $self->next::method($col, $old, $new);
 }
 
 =head1 AUTHOR
