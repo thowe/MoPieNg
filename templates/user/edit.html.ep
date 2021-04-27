@@ -11,49 +11,53 @@
 <tr><td>Username:</td>
 <td><%= $edituser->username %></td></tr>
 <tr>
-<td><label for="input_address_range">Network:</label></td>
+<td><label for="email">Email</label>:</td>
+<td><input type="text" id="email" name="email"
+           value="<%= $edituser->email %>"></td>
+</tr>
+<tr>
+<td><label for="password1">Password</label>:</td>
+<td><input type="password" id="password1" name="password1"
+           value="<%= $edituser->password %>"></td>
+</tr>
+<tr>
+<td><label for="password2">Password again</label>:</td>
+<td><input type="password" id="password2" name="password2"
+           value="<%= $edituser->password %>"></td>
+</tr>
+
+<tr class="offcolor">
+<td>Status:</td>
 <td>
-% if( $c->stash('fillnets') ) {
-<select name="selected_address_range" id="select_address_range">
-<option selected value="manual_input">entered below</option>
-%   foreach my $fillnet ( $c->stash('fillnets')->@* ) {
-<option value="<%= $fillnet->cidr %>"><%= $fillnet->cidr %></option>
-%   }
-</select><br>
-% }
-<input type="text" id="input_address_range" name="address_range"></td>
+<input type="radio" id="renabled" name="status"
+       value="1"<%== " checked=\"checked\"" if($edituser->status == 1 ) %>>
+<label for="renabled">enabled</label><br>
+<input type="radio" id="rdisabled" name="status"
+       value="2"<%== " checked=\"checked\"" if($edituser->status == 2 ) %>>
+<label for="rdisabled">disabled</label><br>
+</td>
 </tr>
+
 <tr>
-<td><label for="description">Description:</label></td>
-<td><input type="text" id="description" name="description"></td>
+<td>Role:</td>
+<td>
+<input type="radio" id="radioadministrator" name="role"
+       value="administrator"<%== " checked=\"checked\"" if($edituser->has_role_name('administrator') ) %>>
+<label for="radioadministrator">administrator</label><br>
+<input type="radio" id="radiocreator" name="role"
+       value="creator"<%== " checked=\"checked\"" if($edituser->has_role_name('creator') ) %>>
+<label for="radiocreator">creator</label><br>
+<input type="radio" id="radioeditor" name="role"
+       value="editor"<%== " checked=\"checked\"" if($edituser->has_role_name('editor') ) %>>
+<label for="radioeditor">editor</label><br>
+<input type="radio" id="radioreader" name="role"
+       value="reader"<%== " checked=\"checked\"" if($edituser->has_role_name('reader') ) %>>
+<label for="radioreader">reader</label>
 </tr>
-<tr>
-<td><label for="owner">Owner:</label></td>
-<td><input type="text" id="owner" name="owner" maxlength="255"></td>
-</tr>
-<tr>
-<td><label for="account">Account:</label></td>
-<td><input type="text" id="account" name="account" maxlength="32"></td>
-</tr>
-<tr>
-<td><label for="service">Service ID:</label></td>
-<td><input type="text" id="service" name="service"></td>
-</tr>
-<tr>
-<td>Will this range be subdivided?</td>
-<td><label for="subdivide_t">yes
-</label><input type="radio" name="subdivide" id="subdivide_t" value="1">
-<label for="subdivide_f">no
-</label><input type="radio" name="subdivide"
-               id="subdivide_f" value="0" checked></td>
-</tr>
-<tr>
-<td><label for="valid_masks">Valid Subnet Masks:</label></td>
-<td><input type="text" id="valid_masks" name="valid_masks" disabled></td>
-</tr>
+
 <tr>
 <td colspan="2" class="buttons">
-<input type="submit" id="createbutton" name="createbutton" value="Create">
+<input type="submit" id="updatebutton" name="updatebutton" value="Update">
 </td>
 </tr>
 </table>
