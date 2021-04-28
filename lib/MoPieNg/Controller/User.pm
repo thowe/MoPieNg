@@ -14,6 +14,10 @@ sub verify_authenticated {
     }
 }
 
+sub add {
+  my $self = shift;
+}
+
 =head2 edit
 
 =cut
@@ -157,4 +161,3 @@ sub logout {
 }
 
 1;
-

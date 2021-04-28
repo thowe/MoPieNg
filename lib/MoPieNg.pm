@@ -53,6 +53,7 @@ sub startup {
   $root->get('/log')->to('log#index');
 
   $root->get('/user/list')->to('user#list');
+  $root->get('/user/add')->to('user#add');
   $root->get('/user/edit/:id')->to('user#edit');
 }
 
