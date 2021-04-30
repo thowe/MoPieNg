@@ -1,4 +1,5 @@
 % layout 'branch_wrapper';
+% my $refp = $c->url_for->path;
 <!-- hidden templates -->
 <div class="templates">
   <!-- This is generated here for use by the jQ get_hosts function. -->
@@ -53,8 +54,8 @@
      ><span class="network_info service"><% if( $child->{'service'} ) { %>service: <%= $child->{'service'} %><% } %></span></p>
     </div>
     <div class="details collapsed"><a href="<%= $c->url_for( 'networkbranchid', 'id' => $child->{'id'} ) %>">zoom in</a> |
-        <a href="<%= $c->url_for('networkeditid', 'id' => $child->{'id'} ) %>">edit</a> |
-        <a href="<%= $c->url_for('networkdeleteid', 'id' => $child->{'id'} ) %>"
+        <a href="<%= $c->url_for('networkeditid', 'id' => $child->{'id'} ) . $refp %>">edit</a> |
+        <a href="<%= $c->url_for('networkdeleteid', 'id' => $child->{'id'} )->query({'refp' => $refp}) %>"
            class="deletenetwork">delete</a></div>
     </div></li>
 %     }
@@ -64,7 +65,8 @@
     <a href="<%= $c->url_for( 'networkaddid', 'id' => $child->pieng_network_id)->query(
                         { 'fsfirst' => $child->first_ip_compact,
                          'fslast' => $child->last_ip_compact,
-                         'rmask' => $mask } ) %>">/<%= $mask %></a>
+                         'rmask' => $mask,
+                          'refp' => $refp, } ) %>">/<%= $mask %></a>
 %       }
     <br><%= $child->first_ip_compact %> to <%= $child->last_ip_compact %></div></li>
 %     }
@@ -76,4 +78,3 @@
 % end
 
 <%= $branchblock->($branchblock, $branch) %>
-

@@ -21,7 +21,7 @@ sub add {
 
   # we don't want to get redirected back to ourself
   my $referrer = $self->param('referrer');
-  $referrer ||= Mojo::URL->new($self->req->headers->referrer)->path;
+  $referrer ||= $self->param('refp');
   $referrer = $self->url_for('networkroots') if $referrer =~ /$path/;
 
   $self->stash('referrer' => $referrer);
@@ -189,7 +189,7 @@ sub branch {
       $self->stash( 'branch' => $network->branch_with_space );
   }
   elsif( $network->parent and $network->parent->subdivide ) {
-      $self->redirect_to( 'networkbranch', 'id' => $network->parent->id );
+      $self->redirect_to( 'networkbranchid', 'id' => $network->parent->id );
   }
   else {
       $self->flash( 'message' => "No valid branch for that network." );
@@ -212,7 +212,7 @@ sub edit {
 
   # we don't want to get redirected back to ourself
   my $referrer = $self->param('referrer');
-  $referrer ||= Mojo::URL->new($self->req->headers->referrer)->path;
+  $referrer ||= $self->param('refp');
   $referrer = $self->url_for('networkroots') if $referrer =~ /$path/;
 
   $self->stash('referrer' => $referrer);
