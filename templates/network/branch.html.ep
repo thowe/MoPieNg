@@ -54,7 +54,7 @@
      ><span class="network_info service"><% if( $child->{'service'} ) { %>service: <%= $child->{'service'} %><% } %></span></p>
     </div>
     <div class="details collapsed"><a href="<%= $c->url_for( 'networkbranchid', 'id' => $child->{'id'} ) %>">zoom in</a> |
-        <a href="<%= $c->url_for('networkeditid', 'id' => $child->{'id'} ) . $refp %>">edit</a> |
+        <a href="<%= $c->url_for('networkeditid', 'id' => $child->{'id'} )->query({'refp' => $refp}) %>">edit</a> |
         <a href="<%= $c->url_for('networkdeleteid', 'id' => $child->{'id'} )->query({'refp' => $refp}) %>"
            class="deletenetwork">delete</a></div>
     </div></li>
