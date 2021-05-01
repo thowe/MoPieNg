@@ -21,7 +21,7 @@ sub add {
 
   # we don't want to get redirected back to ourself
   my $referrer = $self->param('referrer');
-  $referrer ||= $self->param('refp');
+  $referrer //= $self->param('refp');
   $referrer = $self->url_for('networkroots') if $referrer =~ /$path/;
 
   $self->stash('referrer' => $referrer);
@@ -212,7 +212,7 @@ sub edit {
 
   # we don't want to get redirected back to ourself
   my $referrer = $self->param('referrer');
-  $referrer ||= $self->param('refp');
+  $referrer //= $self->param('refp');
   $referrer = $self->url_for('networkroots') if $referrer =~ /$path/;
 
   $self->stash('referrer' => $referrer);

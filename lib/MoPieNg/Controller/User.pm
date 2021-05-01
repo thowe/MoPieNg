@@ -30,7 +30,7 @@ sub edit {
 
   # we don't want to get redirected back to ourself
   my $referrer = $self->param('referrer');
-  $referrer ||= Mojo::URL->new($self->req->headers->referrer)->path;
+  $referrer //= $self->param('refp');
   $referrer = $self->url_for('userlist') if $referrer =~ /$path/;
 
   $self->stash('referrer' => $referrer);
