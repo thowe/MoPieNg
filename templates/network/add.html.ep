@@ -12,7 +12,7 @@
 % }
 % if( $c->stash('fslast') ) {
   <input type="hidden" name="fslast" id="fslast"
-         value="<%= $c->stash('fsfirst') %>">
+         value="<%= $c->stash('fslast') %>">
 % }
 % if( $c->stash('rmask') ) {
   <input type="hidden" name="rmask" id="rmask"
