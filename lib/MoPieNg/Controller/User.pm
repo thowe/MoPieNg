@@ -1,6 +1,8 @@
 package MoPieNg::Controller::User;
 use Mojo::Base 'Mojolicious::Controller';
 
+use Email::Valid;
+
 sub verify_authenticated {
     my $self = shift;
 
@@ -14,8 +16,65 @@ sub verify_authenticated {
     }
 }
 
+=head2 add
+Add a new user form.
+=cut
+
 sub add {
   my $self = shift;
+}
+
+=head2 create
+Add user form is submitted
+=cut
+
+sub create {
+  my $self = shift;
+  my $user = $self->piedb->resultset('User')->find(
+               { 'id' => $self->session('user') } );
+  # If not authorised, drop back to the referring page.
+  if( not $user->has_role_any( qw/ administrator / ) ) {
+    $self->flash('message' => "You are not authorized to create users.");
+    $self->redirect_to('/user/add');
+    return;
+  }
+
+  my $email = $self->param('email');
+  if( !Email::Valid->address($email) ){
+    $self->flash('message' => $email . " is not a valid email address.");
+    $self->redirect_to('/user/add');
+    return;
+  }
+
+  my $password;
+  if( $self->param('password1') ne $self->param('password2') ) {
+    $self->flash( 'message' => "Passwords don't match." );
+    $self->redirect_to('/user/add');
+    return;
+  }
+  else {
+    $password = $self->param('password1');
+  }
+
+  if( defined $self->piedb->resultset('User')->find(
+                { 'username' => $self->param('username') } ) ) {
+    $self->flash( 'message' => "That username is already in use." );
+    $self->redirect_to('/user/add');
+    return;
+  }
+
+  my $new_user = $self->piedb->resultset('User')->new({
+    username => $self->param('username'),
+    email    => $email,
+    password => $password,
+  });
+  my $role = $self->piedb->resultset('Role')->find( {
+    name => $self->param('role') } );
+  $new_user->user_roles->create({ role => $role->id });
+
+  $self->flash( 'message' =>  'Created User ' . $new_user->username );
+  $self->redirect_to('/user/list');
+  return;
 }
 
 =head2 edit
@@ -56,8 +115,7 @@ sub edit {
 #
 #            if(!Email::Valid->address($params->{email})) {
 #                $c->stash->{'message'} = $params->{email} . " is not a valid email address.";
-#                return;
-#            }
+#                re           }
 #
 #            # if our passwords match up
 #            if($params->{password1} eq $params->{password2} &&
@@ -105,10 +163,10 @@ List the user records.
 
 sub list {
   my $self = shift;
-
   my @list = $self->piedb->resultset('User')->search(
                           undef, { order_by => 'username' } );
-  $self->stash( 'users' => @list );
+
+  $self->stash( 'users' => \@list );
   $self->stash( 'message' => $self->flash('message') );
 }
 

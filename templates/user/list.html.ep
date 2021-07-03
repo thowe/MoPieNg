@@ -5,7 +5,7 @@
 <tr><th>Username</th><th>Email Address</th>
 <th>Status</th><th>Role</th><th>edit</th><th>delete</th>
 </tr>
-% foreach my $user ($users) {
+% foreach my $user (@$users) {
 <tr>
 <td><%= $user->username %></td><td><%= $user->email %></td>
 <td><% if( $user->status == 1 ) {  %>enabled<% } else { %>disabled<% } %></td>
