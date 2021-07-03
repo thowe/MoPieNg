@@ -22,6 +22,7 @@ Add a new user form.
 
 sub add {
   my $self = shift;
+  $self->stash( 'message' => $self->flash('message') );
 }
 
 =head2 create
