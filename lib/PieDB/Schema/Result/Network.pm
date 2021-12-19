@@ -516,7 +516,7 @@ Tim Howe <timh@dirtymonday.net>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Tim Howe.
+This software is copyright (c) 2012-2021 by Tim Howe.
 
 This program is distributed in the hope that it will be useful, but it is
 provided "as is" and without any express or implied warranties. For details,
