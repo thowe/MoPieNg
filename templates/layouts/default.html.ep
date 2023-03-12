@@ -1,8 +1,8 @@
 %= include 'default_top'
 %= include 'default_navigation'
 <div id="content">
-% if( defined stash('message') ) {
-<div class="message"><%= stash('message') %></div>
+% if( defined flash('message') ) {
+<div class="message"><%= flash('message') %></div>
 % }
 <%= content %>
 </div>
