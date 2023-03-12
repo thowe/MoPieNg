@@ -1,0 +1,6 @@
+% cpanm DBIx::Class
+% cpanm Authen::Passphrase::BlowfishCrypt
+% cpanm NetAddr::IP::Lite
+% cpanm Moose
+% cpanm DBD::Pg
+% cpanm Email::Valid
