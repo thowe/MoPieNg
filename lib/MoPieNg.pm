@@ -56,6 +56,7 @@ sub startup {
   $root->get('/user/add')->to('user#add');
   $root->post('/user/add')->to('user#create');
   $root->get('/user/edit/:id')->to('user#edit');
+  $root->post('/user/edit/:id')->to('user#edit');
 }
 
 =head2 netlog

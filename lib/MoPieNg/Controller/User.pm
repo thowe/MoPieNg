@@ -111,17 +111,27 @@ sub edit {
     return;
   }
 
-    # If the edit form has actually been submitted...
-    if(lc $self->req->method eq 'post') {
-#
-#            if(!Email::Valid->address($params->{email})) {
-#                $c->stash->{'message'} = $params->{email} . " is not a valid email address.";
-#                re           }
-#
-#            # if our passwords match up
-#            if($params->{password1} eq $params->{password2} &&
-#               length $params->{password1} > 2) {
-#
+  # If the edit form has actually been submitted...
+  if(lc $self->req->method eq 'post') {
+
+    my $email = $self->param('email');
+    if( !Email::Valid->address($email) ){
+      $self->flash('message' => $email . " is not a valid email address.");
+      $self->redirect_to( '/user/edit/' . $self->param('id') );
+      return;
+    }
+
+    my $password;
+    if( $self->param('password1') ne $self->param('password2') ) {
+      $self->flash( 'message' => "Passwords don't match." );
+      $self->redirect_to('/user/edit/' . $self->param('id') );
+      return;
+    }
+    else {
+      $password = $self->param('password1');
+    }
+
+#            {
 #                eval { $edituser->update({
 #                    email    => $params->{email},
 #                    password => $params->{password1},
