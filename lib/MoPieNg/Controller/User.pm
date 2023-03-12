@@ -69,9 +69,11 @@ sub create {
     email    => $email,
     password => $password,
   });
+
   my $role = $self->piedb->resultset('Role')->find( {
     name => $self->param('role') } );
   $new_user->user_roles->create({ role => $role->id });
+  $new_user->set_encrypted_password($password); # HACKY
 
   $self->flash( 'message' =>  'Created User ' . $new_user->username );
   $self->redirect_to('/user/list');
@@ -113,6 +115,12 @@ sub edit {
 
   # If the edit form has actually been submitted...
   if(lc $self->req->method eq 'post') {
+    # If not authorised, drop back to the referring page.
+    if( not $user->has_role_any( qw/ administrator / ) ) {
+      $self->flash('message' => "You are not authorized to edit users.");
+      $self->redirect_to('/user/list');
+      return;
+    }
 
     my $email = $self->param('email');
     if( !Email::Valid->address($email) ){
@@ -131,39 +139,26 @@ sub edit {
       $password = $self->param('password1');
     }
 
-#            {
-#                eval { $edituser->update({
-#                    email    => $params->{email},
-#                    password => $params->{password1},
-#                    status   => $params->{status} }) };
-#
-#                my $role = $c->model('PieDB::Role')->find(
-#                                     { name => $params->{role} } );
-#                $edituser->user_roles->delete();
-#                $edituser->user_roles->create({ role => $role->id });
-#
-#                # If we get to this point the user should have been updated.
-#                $c->flash->{'message'} = "Updated user " . $params->{username};
-#                # Let's head over to our user list to make sure...
-#                $c->response->redirect($c->uri_for(
-#                        $c->controller('Users')->action_for('list')));
-#                $c->detach();
-#            }
-#            else {
-#                $c->stash->{'message'} = "Password mismatch or too short."
-#            }
-#
-#        }
-#        else {
-#            $c->stash->{'message'} = "You are not an administrator."
-#        }
-#
-#    }
-#    else {
-#        # If we are just going to display the user edit form, we
-#        # will give it the user to edit.
-#        $c->stash->{'edituser'} = $edituser;
-    }
+    $edituser->set_columns({
+        email    => $email,
+        password => $password,
+        status   => $self->param('status'),
+    });
+    $edituser->update;
+    $edituser->set_encrypted_password($password); # HACKY
+
+    my $role = $self->piedb->resultset('Role')->find( {
+      name => $self->param('role') } );
+    $edituser->user_roles->delete();
+    $edituser->user_roles->create({ role => $role->id });
+
+    # If we get to this point the user should have been updated.
+    $self->flash( 'message' => "Updated user " . $edituser->username );
+
+    # Let's head over to our user list to make sure...
+    $self->redirect_to('/user/list');
+    return;
+  }
 }
 
 =head2 list
